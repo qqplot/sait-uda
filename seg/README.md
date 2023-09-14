@@ -1,7 +1,25 @@
 # MIC for Domain-Adaptive Semantic Segmentation
 
-## Environment Setup
+## Flat2Fish
+```shell
+#0. 관련된 패키지 설치
+pip install mmcv-full
 
+#1. (생략하시오.) 데이터 통계 생성
+python tools/convert_datasets/flat.py data/flat --nproc 8
+
+#2. `pretrained`에 checkpoint를 넣으시오. (따로 드리겠소.)
+python run_experiments.py --config configs/mic/flatHR2fishHR_mic_hrda.py
+
+#3. 훈련하기 (gpu는 2개 이상 잡으시오)
+python run_experiments.py --config configs/mic/gtaHR2csHR_mic_hrda.py
+# 또는
+sbatch run.sh # 수정할 것
+
+```
+
+
+## Environment Setup
 First, please install cuda version 11.0.3 available at [https://developer.nvidia.com/cuda-11-0-3-download-archive](https://developer.nvidia.com/cuda-11-0-3-download-archive). It is required to build mmcv-full later.
 
 For this project, we used python 3.8.5. We recommend setting up a new virtual
