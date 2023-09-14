@@ -97,6 +97,8 @@ DAFormer
 train IDs and to generate the class index for RCS:
 
 ```shell
+python tools/convert_datasets/flat.py data/flat --nproc 8
+
 python tools/convert_datasets/gta.py data/gta --nproc 8
 python tools/convert_datasets/cityscapes.py data/cityscapes --nproc 8
 python tools/convert_datasets/synthia.py data/synthia/ --nproc 8
@@ -109,6 +111,8 @@ of the final MIC(HRDA) on GTA→Cityscapes. A training job can be launched using
 
 ```shell
 python run_experiments.py --config configs/mic/gtaHR2csHR_mic_hrda.py
+
+python run_experiments.py --config configs/mic/flatHR2fishHR_mic_hrda.py
 ```
 
 The logs and checkpoints are stored in `work_dirs/`.
@@ -129,6 +133,8 @@ in `configs/generated/`.
 A trained model can be evaluated using:
 
 ```shell
+./test.sh work_dirs/local-basic/230913_2341_flatHR2fishHR_mic_hrda_s2_4e66e 
+
 sh test.sh work_dirs/run_name/
 ```
 

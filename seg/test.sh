@@ -8,7 +8,8 @@
 #!/bin/bash
 
 TEST_ROOT=$1
-CONFIG_FILE="${TEST_ROOT}/*${TEST_ROOT: -1}.py"  # or .json for old configs
+
+CONFIG_FILE="${TEST_ROOT}/${TEST_ROOT##*/}.py"  # or .json for old configs
 CHECKPOINT_FILE="${TEST_ROOT}/latest.pth"
 SHOW_DIR="${TEST_ROOT}/preds"
 echo 'Config File:' $CONFIG_FILE
