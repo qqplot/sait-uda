@@ -9,6 +9,7 @@ _base_ = [
     '../_base_/models/daformer_sepaspp_mitb5.py',
     # GTA->Cityscapes High-Resolution Data Loading
     '../_base_/datasets/uda_flatHR_to_fishHR_1024x1024.py',
+    # '../_base_/datasets/uda_fishHR_to_fishHR_1024x1024.py',
     # DAFormer Self-Training
     '../_base_/uda/dacs_a999_fdthings.py',
     # AdamW Optimizer
@@ -92,22 +93,21 @@ optimizer = dict(
             head=dict(lr_mult=10.0),
             pos_block=dict(decay_mult=0.0),
             norm=dict(decay_mult=0.0))))
-# n_gpus = 4
-gpus = 4
+
+n_gpus = 1
 gpu_model = 'NVIDIATITANRTX'
 
-runner = dict(type='IterBasedRunner', max_iters=40000)
+runner = dict(type='IterBasedRunner', max_iters=20000)
 # Logging Configuration
-checkpoint_config = dict(by_epoch=False, interval=1000, max_keep_ckpts=1)
-evaluation = dict(interval=40000, metric='mIoU')
+checkpoint_config = dict(by_epoch=False, interval=1000, max_keep_ckpts=3)
+evaluation = dict(interval=5000, metric='mIoU')
 # Meta Information for Result Analysis
 name = 'flatHR2fishHR_mic_hrda_s2'
-exp = 'basic'
-name_dataset = 'uda_flatHR_to_fishHR_1024x1024' # uda_flatHR_to_fishHR_1024x1024
+# exp = 'lbl12_correct'
+exp = 'blend'
+name_dataset = 'uda_flatHR_to_fishHR_1024x1024' 
 name_architecture = 'hrda1-512-0.1_daformer_sepaspp_sl_mitb5'
 name_encoder = 'mitb5'
 name_decoder = 'hrda1-512-0.1_daformer_sepaspp_sl'
 name_uda = 'dacs_a999_fdthings_rcs0.01-2.0_cpl2_m64-0.7-spta'
 name_opt = 'adamw_6e-05_pmTrue_poly10warm_1x2_40k'
-
-# For the other configurations used in the paper, please refer to experiment.py

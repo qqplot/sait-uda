@@ -93,11 +93,16 @@ def main(args):
         cfg.load_from = args.load_from
     if args.resume_from is not None:
         cfg.resume_from = args.resume_from
+
+      
     if args.gpu_ids is not None:
         cfg.gpu_ids = args.gpu_ids
     else:
         cfg.gpu_ids = range(1) if args.gpus is None else range(args.gpus)
+        # cfg.gpu_ids = range(1) if cfg.n_gpus is None else range(cfg.n_gpus)
 
+    print("cfg.gpu_ids:", cfg.gpu_ids)  
+    
     # init distributed env first, since logger depends on the dist info.
     if args.launcher == 'none':
         distributed = False

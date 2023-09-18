@@ -29,7 +29,7 @@ def convert_to_train_id(file):
             sample_class_stats[k] = n
 
     sample_class_stats['file'] = file
-    Image.fromarray(label_copy, mode='L').save(file)
+    # Image.fromarray(label_copy, mode='L').save(file)
     return sample_class_stats
 
 
@@ -74,7 +74,7 @@ def main():
     mmcv.mkdir_or_exist(out_dir)
 
     gt_dir = osp.join(gta_path, args.gt_dir)
-
+    print(gt_dir)
     poly_files = []
     for poly in mmcv.scandir(
             gt_dir, suffix=tuple(f'{i}.png' for i in range(10)),
@@ -82,6 +82,7 @@ def main():
         poly_file = osp.join(gt_dir, poly)
         poly_files.append(poly_file)
     poly_files = sorted(poly_files)
+    
 
     only_postprocessing = False
     if not only_postprocessing:

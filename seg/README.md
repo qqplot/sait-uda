@@ -7,6 +7,10 @@ pip install mmcv-full
 
 #1. (생략하시오.) 데이터 통계 생성
 python tools/convert_datasets/flat.py data/flat --nproc 8
+python tools/convert_datasets/flat.py /shared/s2/lab01/dataset/fish --gt-dir train_source_gt_blend_lbl12 --nproc 8
+
+python tools/convert_datasets/flat.py /shared/s2/lab01/dataset/fish/all --gt-dir train_source_gt_all --nproc 8
+
 
 #2. `pretrained`에 checkpoint를 넣으시오. (따로 드리겠소.)
 python run_experiments.py --config configs/mic/flatHR2fishHR_mic_hrda.py
