@@ -60,18 +60,29 @@ def createFolder(directory):
 if __name__ == '__main__':
     # Init the model from the config and the checkpoint    
     base_path = '/home/s2/kyubyungchae/MIC/seg/'
-    type_name = 'blend' # 'fish2fish' 'basic'
-    # exp_name = '230914_1828_flatHR2fishHR_mic_hrda_s2_022a1'
-    exp_name = '230918_0432_flatHR2fishHR_mic_hrda_s2_5c420'
 
+    type_name = 'small' # 'basic' 'fish2fish' 'blend' 'small'
+    # exp_name = '230914_1828_flatHR2fishHR_mic_hrda_s2_022a1'
+    # exp_name = '230918_0432_flatHR2fishHR_mic_hrda_s2_5c420'
+    # exp_name = '230919_1506_flatHR2fishHR_mic_hrda_s2_95481' # best
+    exp_name = '230920_1934_flatHR2fishHR_mic_hrda_s2_068cf' # best start
+    show = True
+    iters = 'latest'  # latest
     config_path = base_path + f'work_dirs/local-{type_name}/{exp_name}/{exp_name}.py'
-    checkpoint_path = base_path + f'work_dirs/local-{type_name}/{exp_name}/latest.pth'
+    checkpoint_path = base_path + f'work_dirs/local-{type_name}/{exp_name}/{iters}.pth'
     test_path = base_path + '/test.csv'
     data_path = '/shared/s2/lab01/dataset/sait_uda/data/'
     submission_path = data_path + '/sample_submission.csv'
 
     now = datetime.now(timezone('Asia/Seoul'))
     now_str = now.strftime('%Y-%m-%d %H_%M_%S')
+    out_path = '/shared/s2/lab01/result/mic/' + f'out/{now_str}/'    
+    show_dir = '/shared/s2/lab01/result/mic/' + f'show_image/{now_str}/'
+
+    createFolder(out_path)
+    if show:    
+        createFolder(show_dir)
+
 
     cfg = mmcv.Config.fromfile(config_path)
     cfg = update_legacy_cfg(cfg)
@@ -117,8 +128,7 @@ if __name__ == '__main__':
 
 
     efficient_test = False
-    show = True
-    show_dir = base_path + 'show_image/' + now_str
+
     model = MMDataParallel(model, device_ids=[0])
 
 
@@ -127,10 +137,6 @@ if __name__ == '__main__':
     model.eval()
     results = []
     dataset = data_loader.dataset
-
-    out_path = base_path + f'out/{now_str}/'
-    createFolder(out_path)
-
 
     for i, data in tqdm(enumerate(data_loader), total=len(data_loader)):
 
@@ -148,6 +154,36 @@ if __name__ == '__main__':
             pred_numpy = Image.fromarray(pred_numpy) # 이미지로 변환
             pred_numpy.save(f'{out_path}{ori_filename}')
             # results.append(result)
+        
+        if show:
+            img_tensor = data['img'][0]
+            img_metas = data['img_metas'][0].data[0]
+            imgs = tensor2imgs(img_tensor, **img_metas[0]['img_norm_cfg'])
+            assert len(imgs) == len(img_metas)
+
+            for img, img_meta in zip(imgs, img_metas):
+                h, w, _ = img_meta['img_shape']
+                img_show = img[:h, :w, :]
+
+                ori_h, ori_w = img_meta['ori_shape'][:-1]
+                img_show = mmcv.imresize(img_show, (ori_w, ori_h))
+
+                out_file = osp.join(show_dir, img_meta['ori_filename'])
+
+                if hasattr(model.module.decode_head,
+                           'debug_output_attention') and \
+                        model.module.decode_head.debug_output_attention:
+                    # Attention debug output
+                    mmcv.imwrite(result[0] * 255, out_file)
+                else:
+                    model.module.show_result(
+                        img_show,
+                        result,
+                        palette=dataset.PALETTE,
+                        show=show,
+                        out_file=out_file,
+                        opacity=0.6)
+
         ######
     
     test_img_list = pd.read_csv(test_path)
@@ -176,3 +212,7 @@ if __name__ == '__main__':
 
     result_dir = './results'
     submit.to_csv(result_dir + '/' + now_str + ' submit.csv', index=False)
+
+    print("DONE!")
+    print("outpath:", out_path)
+    print("chk_path:", checkpoint_path)
