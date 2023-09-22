@@ -9,18 +9,15 @@ dataset_type = 'FlatDataset'
 data_root = '/shared/s2/lab01/dataset/sait_uda/data/train_source_image/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
-crop_size = (1024, 1024)
+crop_size = (768, 768)
 flat_train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
-    # dict(type='Resize', img_scale=(2048, 1024)),
     dict(type='Resize', img_scale=(2560, 1440)),
-    # dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
-    dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.90),    
+    dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
-    dict(type='RandomRotate', prob=0.2, degree=20, pad_val=0),
-    dict(type='GaussianBlur', prob=0.2),
-    # dict(type='PhotoMetricDistortion'),  # is applied later in dacs.py
+    dict(type='GaussianNoise', prob=0.5, std=1.0),        
+    dict(type='PhotoMetricDistortion'),  # is applied later in dacs.py
     dict(type='Normalize', **img_norm_cfg),
     dict(type='Pad', size=crop_size, pad_val=0, seg_pad_val=255),
     dict(type='DefaultFormatBundle'),
@@ -32,8 +29,6 @@ fish_train_pipeline = [
     dict(type='Resize', img_scale=(2048, 1024)),
     dict(type='RandomCrop', crop_size=crop_size),
     dict(type='RandomFlip', prob=0.5),
-    dict(type='RandomRotate', prob=0.2, degree=20, pad_val=0),    
-    dict(type='GaussianBlur', prob=0.2),
     # dict(type='PhotoMetricDistortion'),  # is applied later in dacs.py
     dict(type='Normalize', **img_norm_cfg),
     dict(type='Pad', size=crop_size, pad_val=0, seg_pad_val=255),
@@ -44,7 +39,7 @@ test_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(
         type='MultiScaleFlipAug',
-        img_scale=(2048, 1024),
+        img_scale=(1920, 1080),
         # MultiScaleFlipAug is disabled by not providing img_ratios and
         # setting flip=False
         # img_ratios=[0.5, 0.75, 1.0, 1.25, 1.5, 1.75],

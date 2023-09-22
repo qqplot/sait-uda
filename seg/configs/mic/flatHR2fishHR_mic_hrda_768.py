@@ -9,7 +9,7 @@ _base_ = [
     '../_base_/models/daformer_sepaspp_mitb5.py',
     # GTA->Cityscapes High-Resolution Data Loading
     # '../_base_/datasets/uda_flatHR_to_fishHR_1024x1024.py',
-    '../_base_/datasets/uda_flatHR_to_fishHR_512x512.py',
+    '../_base_/datasets/uda_flatHR_to_fishHR_768x768.py',    
     # DAFormer Self-Training
     '../_base_/uda/dacs_a999_fdthings.py',
     # AdamW Optimizer
@@ -34,7 +34,7 @@ model = dict(
     # the context crop.
     scales=[1, 0.5],
     # Use a relative crop size of 0.5 (=512/1024) for the detail crop.
-    hr_crop_size=(256, 256),
+    hr_crop_size=(480, 480),
     # Use LR features for the Feature Distance as in the original DAFormer.
     feature_scale=0.5,
     # Make the crop coordinates divisible by 8 (output stride = 4,
@@ -46,20 +46,16 @@ model = dict(
     test_cfg=dict(
         mode='slide',
         batched_slide=True,
-        # stride=[128, 128],
-        stride=[256, 256],
-        # stride=[512, 512],
-        crop_size=[512, 512]))
+        stride=[192, 192],
+        crop_size=[768, 768]))
 data = dict(
     train=dict(
         # Rare Class Sampling
         # min_crop_ratio=2.0 for HRDA instead of min_crop_ratio=0.5 for
         # DAFormer as HRDA is trained with twice the input resolution, which
         # means that the inputs have 4 times more pixels.
-        # rare_class_sampling=dict(
-        #     min_pixels=3000, class_temp=0.01, min_crop_ratio=2.0),
         rare_class_sampling=dict(
-            min_pixels=1500, class_temp=0.01, min_crop_ratio=2.0),            
+            min_pixels=3000, class_temp=0.10, min_crop_ratio=2.0),
         # Pseudo-Label Cropping v2 (from HRDA):
         # Generate mask of the pseudo-label margins in the data loader before
         # the image itself is cropped to ensure that the pseudo-label margins
@@ -70,7 +66,7 @@ data = dict(
     # Use one separate thread/worker for data loading.
     workers_per_gpu=1,
     # Batch size
-    samples_per_gpu=1,
+    samples_per_gpu=2,
 )
 # MIC Parameters
 uda = dict(
@@ -97,21 +93,22 @@ optimizer = dict(
             head=dict(lr_mult=10.0),
             pos_block=dict(decay_mult=0.0),
             norm=dict(decay_mult=0.0))))
-n_gpus = 4
+
+n_gpus = 1
 gpu_model = 'NVIDIATITANRTX'
 
-runner = dict(type='IterBasedRunner', max_iters=20000)
+runner = dict(type='IterBasedRunner', max_iters=10000)
 # Logging Configuration
-checkpoint_config = dict(by_epoch=False, interval=2000, max_keep_ckpts=2)
-evaluation = dict(interval=1000, metric='mIoU')
+checkpoint_config = dict(by_epoch=False, interval=100, max_keep_ckpts=10)
+evaluation = dict(interval=5000, metric='mIoU')
 # Meta Information for Result Analysis
 name = 'flatHR2fishHR_mic_hrda_s2'
-exp = 'cityscapes'
-name_dataset = 'uda_flatHR_to_fishHR_512x512' # uda_flatHR_to_fishHR_1024x1024
+# exp = 'basic'
+# exp = 'lbl12_correct'
+exp = 'midium'
+name_dataset = 'uda_flatHR_to_fishHR_768x768' 
 name_architecture = 'hrda1-512-0.1_daformer_sepaspp_sl_mitb5'
 name_encoder = 'mitb5'
 name_decoder = 'hrda1-512-0.1_daformer_sepaspp_sl'
 name_uda = 'dacs_a999_fdthings_rcs0.01-2.0_cpl2_m64-0.7-spta'
 name_opt = 'adamw_6e-05_pmTrue_poly10warm_1x2_40k'
-
-# For the other configurations used in the paper, please refer to experiment.py

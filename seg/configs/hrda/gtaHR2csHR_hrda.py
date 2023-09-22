@@ -55,8 +55,10 @@ data = dict(
         # min_crop_ratio=2.0 for HRDA instead of min_crop_ratio=0.5 for
         # DAFormer as HRDA is trained with twice the input resolution, which
         # means that the inputs have 4 times more pixels.
+        # rare_class_sampling=dict(
+        #     min_pixels=3000, class_temp=0.01, min_crop_ratio=2.0),
         rare_class_sampling=dict(
-            min_pixels=3000, class_temp=0.01, min_crop_ratio=2.0),
+            min_pixels=3000, class_temp=0.01, min_crop_ratio=2.0),            
         # Pseudo-Label Cropping v2:
         # Generate mask of the pseudo-label margins in the data loader before
         # the image itself is cropped to ensure that the pseudo-label margins

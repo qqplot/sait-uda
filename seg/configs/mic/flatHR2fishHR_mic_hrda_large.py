@@ -8,8 +8,8 @@ _base_ = [
     # DAFormer Network Architecture
     '../_base_/models/daformer_sepaspp_mitb5.py',
     # GTA->Cityscapes High-Resolution Data Loading
-    '../_base_/datasets/uda_flatHR_to_fishHR_1024x1024.py',
-    # '../_base_/datasets/uda_fishHR_to_fishHR_1024x1024.py',
+    # '../_base_/datasets/uda_flatHR_to_fishHR_1024x1024.py',
+    '../_base_/datasets/uda_flatHR_to_fishHR_1024x1024.py',    
     # DAFormer Self-Training
     '../_base_/uda/dacs_a999_fdthings.py',
     # AdamW Optimizer
