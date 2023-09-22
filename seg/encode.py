@@ -9,8 +9,12 @@ from tqdm import tqdm
 import mmcv
 
 base_path = '/home/s2/kyubyungchae/MIC/seg/'
-test_path = base_path + '/test.csv'
-out_path = base_path + 'out/2023-09-16 23_11_15/'
+test_path = base_path + 'test.csv'
+# now_str = '2023-09-21 10_26_58_corr'
+# now_str = '2023-09-21 22_08_44_corr'
+now_str = '2023-09-22 11_38_57_corr'
+
+out_path = f'/shared/s2/lab01/result/mic/out/{now_str}/'
 data_path = '/shared/s2/lab01/dataset/sait_uda/data/'
 submission_path = data_path + '/sample_submission.csv'
 
@@ -47,9 +51,6 @@ if __name__ == '__main__':
 
     submit = pd.read_csv(submission_path)
     submit['mask_rle'] = submit_outputs
-
-    now = datetime.now(timezone('Asia/Seoul'))
-    now_str = now.strftime('%Y-%m-%d %H_%M_%S')
 
     result_dir = './results'
     submit.to_csv(result_dir + '/' + now_str + ' submit.csv', index=False)
