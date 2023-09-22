@@ -4,6 +4,15 @@ watch.sh
 __pycache__/
 *.py[cod]
 *$py.class
+*.ipynb
+run_submit.sh
+test.csv
+*.csv
+results/
+**/*.png
+*.png
+run_aftermask.sh
+**/__pycache__/
 
 # C extensions
 *.so
