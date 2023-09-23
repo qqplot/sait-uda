@@ -44,14 +44,13 @@ model = dict(
                           1.0507, # Pole
                           1.0945, # Traffic Light
                           1.1089, # Traffic Sign
-                          0.9539, # Nature
+                          1.0000, # Nature
                           0.866, # Sky
                           1.1116, # Person
                           1.0529, # Rider
                           1.0000, # Car
                           0.8373, # Background
                           ]
-                        #   ,0.9539, 0.918, 0.9037, 0.8786, 0.866, 0.8373]         
             )),
     # model training and testing settings
     train_cfg=dict(),

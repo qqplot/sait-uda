@@ -13,13 +13,13 @@ crop_size = (1024, 1024)
 flat_train_pipeline = [
     dict(type='LoadImageFromFile'),
     dict(type='LoadAnnotations'),
-    # dict(type='Resize', img_scale=(2048, 1024)),
     dict(type='Resize', img_scale=(2560, 1440)),
     # dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.90),    
     dict(type='RandomFlip', prob=0.5),
     dict(type='RandomRotate', prob=0.2, degree=20, pad_val=0),
     dict(type='GaussianBlur', prob=0.2),
+    dict(type='GaussianNoise', prob=0.2, std=10.0),    
     # dict(type='PhotoMetricDistortion'),  # is applied later in dacs.py
     dict(type='Normalize', **img_norm_cfg),
     dict(type='Pad', size=crop_size, pad_val=0, seg_pad_val=255),
@@ -34,6 +34,7 @@ fish_train_pipeline = [
     dict(type='RandomFlip', prob=0.5),
     dict(type='RandomRotate', prob=0.2, degree=20, pad_val=0),    
     dict(type='GaussianBlur', prob=0.2),
+    dict(type='GaussianNoise', prob=0.2, std=10.0),        
     # dict(type='PhotoMetricDistortion'),  # is applied later in dacs.py
     dict(type='Normalize', **img_norm_cfg),
     dict(type='Pad', size=crop_size, pad_val=0, seg_pad_val=255),
@@ -65,8 +66,6 @@ data = dict(
         source=dict(
             type='FlatDataset',
             data_root='/shared/s2/lab01/dataset/sait_uda/data/',
-            # img_dir='train_source_image_all',
-            # ann_dir='train_source_gt_all',
             img_dir='train_source_image_all_blend',
             ann_dir='train_source_gt_all_blend',
             pipeline=flat_train_pipeline),

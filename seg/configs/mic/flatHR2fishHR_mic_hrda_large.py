@@ -99,12 +99,11 @@ gpu_model = 'NVIDIATITANRTX'
 
 runner = dict(type='IterBasedRunner', max_iters=20000)
 # Logging Configuration
-checkpoint_config = dict(by_epoch=False, interval=1000, max_keep_ckpts=3)
-evaluation = dict(interval=5000, metric='mIoU')
+checkpoint_config = dict(by_epoch=False, interval=1000, max_keep_ckpts=1)
+evaluation = dict(interval=1000, metric='mIoU')
 # Meta Information for Result Analysis
 name = 'flatHR2fishHR_mic_hrda_s2'
-# exp = 'lbl12_correct'
-exp = 'blend'
+exp = 'large'
 name_dataset = 'uda_flatHR_to_fishHR_1024x1024' 
 name_architecture = 'hrda1-512-0.1_daformer_sepaspp_sl_mitb5'
 name_encoder = 'mitb5'

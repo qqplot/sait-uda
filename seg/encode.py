@@ -12,7 +12,9 @@ base_path = '/home/s2/kyubyungchae/MIC/seg/'
 test_path = base_path + 'test.csv'
 # now_str = '2023-09-21 10_26_58_corr'
 # now_str = '2023-09-21 22_08_44_corr'
-now_str = '2023-09-22 11_38_57_corr'
+# now_str = '2023-09-22 11_38_57_corr'
+now_str = '2023-09-23 02_35_19_corr'
+
 
 out_path = f'/shared/s2/lab01/result/mic/out/{now_str}/'
 data_path = '/shared/s2/lab01/dataset/sait_uda/data/'

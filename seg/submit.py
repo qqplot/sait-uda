@@ -60,13 +60,23 @@ def createFolder(directory):
 if __name__ == '__main__':
     # Init the model from the config and the checkpoint    
     base_path = '/home/s2/kyubyungchae/MIC/seg/'
-
-    type_name = 'small' # 'basic' 'fish2fish' 'blend' 'small'
+    now = datetime.now(timezone('Asia/Seoul'))
+    now_str = now.strftime('%Y-%m-%d %H_%M_%S')
+    out_path = '/shared/s2/lab01/result/mic/' + f'out/{now_str}/'    
+    show_dir = '/shared/s2/lab01/result/mic/' + f'show_image/{now_str}/'
+    show = False
+    
+    type_name = 'cityscapes' # 'basic' 'fish2fish' 'blend' 'small' 'weight'
     # exp_name = '230914_1828_flatHR2fishHR_mic_hrda_s2_022a1'
     # exp_name = '230918_0432_flatHR2fishHR_mic_hrda_s2_5c420'
     # exp_name = '230919_1506_flatHR2fishHR_mic_hrda_s2_95481' # best
-    exp_name = '230920_1934_flatHR2fishHR_mic_hrda_s2_068cf' # best start
-    show = True
+    # exp_name = '230920_1934_flatHR2fishHR_mic_hrda_s2_068cf' # best start
+    # exp_name = '230921_1619_flatHR2fishHR_mic_hrda_s2_9347a' # load_from = 'work_dirs/local-small/230920_1934_flatHR2fishHR_mic_hrda_s2_068cf/iter_20000.pth'
+    # exp_name = '230921_1428_flatHR2fishHR_mic_hrda_s2_bef7e' # 0.5
+    # exp_name = '230922_1619_flatHR2fishHR_mic_hrda_s2_4d990' # 0.514462
+    exp_name = '230923_0403_flatHR2fishHR_mic_hrda_s2_74548'
+
+
     iters = 'latest'  # latest
     config_path = base_path + f'work_dirs/local-{type_name}/{exp_name}/{exp_name}.py'
     checkpoint_path = base_path + f'work_dirs/local-{type_name}/{exp_name}/{iters}.pth'
@@ -74,10 +84,6 @@ if __name__ == '__main__':
     data_path = '/shared/s2/lab01/dataset/sait_uda/data/'
     submission_path = data_path + '/sample_submission.csv'
 
-    now = datetime.now(timezone('Asia/Seoul'))
-    now_str = now.strftime('%Y-%m-%d %H_%M_%S')
-    out_path = '/shared/s2/lab01/result/mic/' + f'out/{now_str}/'    
-    show_dir = '/shared/s2/lab01/result/mic/' + f'show_image/{now_str}/'
 
     createFolder(out_path)
     if show:    
@@ -186,9 +192,6 @@ if __name__ == '__main__':
 
         ######
     
-    test_img_list = pd.read_csv(test_path)
-    test_img_name_lis = test_img_list.iloc[:,1]
-
 
     submit_outputs = []
     for i, fname in tqdm(enumerate(test_img_name_lis), total=len(test_img_name_lis)):

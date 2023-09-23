@@ -13,7 +13,7 @@ def get_arguments():
     parser = argparse.ArgumentParser()
     parser.add_argument('--base_path', 
                         type=str,
-                        default='/shared/s2/lab01/result/mic/out/2023-09-22 11_38_57/'
+                        default='/shared/s2/lab01/result/mic/out/2023-09-23 02_35_19/'
     )
     parser.add_argument('--fast', 
                         type=bool,
@@ -69,7 +69,28 @@ def after_mask(mask, fast=True, verbose=False):
                         mask[y, x] = 12
     return mask, sum
 
+def after_mask_easy(mask, verbose=False):
+    height, width = mask.shape
 
+    sky_threshold = int(height * 0.85)
+    left_threshold = int(width * 0.25)
+    right_threshold = int(width * 0.75)    
+    if verbose:
+        print('\nsky_threshold:', sky_threshold)
+    sum = 0 
+    for y in range(sky_threshold, height):
+        for x in range(width):
+            if x >= left_threshold and x <= right_threshold:
+                if mask[y, x] not in [0, 12]:
+                    sum += 1
+                    mask[y, x] = 0
+            else:
+                if mask[y, x] not in [0, 12]:
+                    sum += 1
+                    mask[y, x] = 12
+
+
+    return mask, sum, sky_threshold
 
 
 if __name__ == '__main__':
@@ -91,12 +112,13 @@ if __name__ == '__main__':
         ann_name = args.base_path + fname
         mask = cv2.imread(ann_name, cv2.IMREAD_GRAYSCALE)
 
-        mask, sum = after_mask(mask, args.fast)
+        mask, sum, sky_threshold = after_mask_easy(mask)
 
         changed_pixs.append(sum)
         cv2.imwrite(out_path + fname, mask)
 
     print("out_path:", out_path)
+    print("sky_threshold:", sky_threshold)
     print("Avg. # of Changed Pixels:", np.mean(changed_pixs))
 
 

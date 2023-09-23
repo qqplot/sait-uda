@@ -97,16 +97,16 @@ optimizer = dict(
             head=dict(lr_mult=10.0),
             pos_block=dict(decay_mult=0.0),
             norm=dict(decay_mult=0.0))))
-n_gpus = 4
+n_gpus = 1
 gpu_model = 'NVIDIATITANRTX'
 
 runner = dict(type='IterBasedRunner', max_iters=20000)
 # Logging Configuration
-checkpoint_config = dict(by_epoch=False, interval=2000, max_keep_ckpts=2)
+checkpoint_config = dict(by_epoch=False, interval=1000, max_keep_ckpts=1)
 evaluation = dict(interval=1000, metric='mIoU')
 # Meta Information for Result Analysis
 name = 'flatHR2fishHR_mic_hrda_s2'
-exp = 'cityscapes'
+exp = 'cityscapes-long'
 name_dataset = 'uda_flatHR_to_fishHR_512x512' # uda_flatHR_to_fishHR_1024x1024
 name_architecture = 'hrda1-512-0.1_daformer_sepaspp_sl_mitb5'
 name_encoder = 'mitb5'
