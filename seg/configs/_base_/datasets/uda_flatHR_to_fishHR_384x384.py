@@ -9,11 +9,11 @@ dataset_type = 'FlatDataset'
 data_root = '/shared/s2/lab01/dataset/sait_uda/data/train_source_image/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
-crop_size = (512, 512)
-_resize_size = (1920, 960)
+# crop_size = (512, 512)
+# _resize_size = (1920, 960)
 
-# crop_size = (384,384)
-# _resize_size = (1024,512)
+crop_size = (384,384)
+_resize_size = (1024,512)
 
 train_pipeline = [
     dict(type='LoadImageFromFile'),
@@ -21,9 +21,9 @@ train_pipeline = [
     dict(type='Resize', img_scale=_resize_size),
     dict(type='RandomCrop', crop_size=crop_size, cat_max_ratio=0.75),
     dict(type='RandomFlip', prob=0.5),
-    # dict(type='SaltAndPepperNoise', noise_rate=100),
-    dict(type='GaussianBlur', prob=0.2),
-    dict(type='GaussianNoise', prob=0.5, std=1.0),
+    dict(type='SaltAndPepperNoise', noise_rate=100),
+    # dict(type='GaussianBlur', prob=0.2),
+    # dict(type='GaussianNoise', prob=0.5, std=1.0),
     dict(type='RandomRotate', prob=0.2, degree=20, pad_val=0),
     dict(
         type='Normalize',

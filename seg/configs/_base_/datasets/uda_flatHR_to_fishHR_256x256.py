@@ -9,11 +9,9 @@ dataset_type = 'FlatDataset'
 data_root = '/shared/s2/lab01/dataset/sait_uda/data/train_source_image/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
-crop_size = (512, 512)
-_resize_size = (1920, 960)
 
-# crop_size = (384,384)
-# _resize_size = (1024,512)
+crop_size = (256,256)
+_resize_size = (1024,512)
 
 train_pipeline = [
     dict(type='LoadImageFromFile'),

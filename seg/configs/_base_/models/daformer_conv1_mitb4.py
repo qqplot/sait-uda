@@ -13,20 +13,20 @@ find_unused_parameters = True
 model = dict(
     type='EncoderDecoder',
     pretrained='pretrained/mit_b5.pth',
-    backbone=dict(type='mit_b5', style='pytorch'),
+    backbone=dict(type='mit_b4', style='pytorch'),
     decode_head=dict(
         type='DAFormerHead',
         in_channels=[64, 128, 320, 512],
         in_index=[0, 1, 2, 3],
-        channels=256,
-        # channels=128,
+        # channels=256,
+        channels=128,
         dropout_ratio=0.1,
         num_classes=13,
         norm_cfg=norm_cfg,
         align_corners=False,
         decoder_params=dict(
-            embed_dims=256,
-            # embed_dims=128,
+            # embed_dims=256,
+            embed_dims=128,
             embed_cfg=dict(type='mlp', act_cfg=None, norm_cfg=None),
             embed_neck_cfg=dict(type='mlp', act_cfg=None, norm_cfg=None),
             fusion_cfg=dict(

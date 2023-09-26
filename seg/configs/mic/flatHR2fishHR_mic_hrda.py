@@ -2,20 +2,24 @@
 # Copyright (c) 2022 ETH Zurich, Lukas Hoyer. All rights reserved.
 # Licensed under the Apache License, Version 2.0
 # ---------------------------------------------------------------
+_size = 384
+_min_pixels = 1000
 
 _base_ = [
     '../_base_/default_runtime.py',
     # DAFormer Network Architecture
     '../_base_/models/daformer_sepaspp_mitb5.py',
     # GTA->Cityscapes High-Resolution Data Loading
-    # '../_base_/datasets/uda_flatHR_to_fishHR_1024x1024.py',
-    '../_base_/datasets/uda_flatHR_to_fishHR_512x512.py',
+    f'../_base_/datasets/uda_flatHR_to_fishHR_{_size}x{_size}.py',
     # DAFormer Self-Training
     '../_base_/uda/dacs_a999_fdthings.py',
     # AdamW Optimizer
     '../_base_/schedules/adamw.py',
-    # Linear Learning Rate Warmup with Subsequent Linear Decay
+    # '../_base_/schedules/sgd.py',
+
+    # Linear Learning Rate Warmup with Subsequevent Linear Decay
     '../_base_/schedules/poly10warm.py'
+    # '../_base_/schedules/poly10.py'
 ]
 # Random Seed
 seed = 2  # seed with median performance
@@ -34,7 +38,7 @@ model = dict(
     # the context crop.
     scales=[1, 0.5],
     # Use a relative crop size of 0.5 (=512/1024) for the detail crop.
-    hr_crop_size=(256, 256),
+    hr_crop_size=(_size // 2, _size // 2),
     # Use LR features for the Feature Distance as in the original DAFormer.
     feature_scale=0.5,
     # Make the crop coordinates divisible by 8 (output stride = 4,
@@ -46,8 +50,8 @@ model = dict(
     test_cfg=dict(
         mode='slide',
         batched_slide=True,
-        stride=[256, 256],
-        crop_size=[512, 512]))
+        stride=[_size // 4, _size // 4],
+        crop_size=[_size, _size]))
 data = dict(
     train=dict(
         # Rare Class Sampling
@@ -55,7 +59,7 @@ data = dict(
         # DAFormer as HRDA is trained with twice the input resolution, which
         # means that the inputs have 4 times more pixels.
         rare_class_sampling=dict(
-            min_pixels=3000, class_temp=0.01, min_crop_ratio=2.0),
+            min_pixels=_min_pixels, class_temp=0.01, min_crop_ratio=2.0),
         # Pseudo-Label Cropping v2 (from HRDA):
         # Generate mask of the pseudo-label margins in the data loader before
         # the image itself is cropped to ensure that the pseudo-label margins
@@ -83,7 +87,7 @@ uda = dict(
     # Use random patch masking with a patch size of 64x64
     # and a mask ratio of 0.7
     mask_generator=dict(
-        type='block', mask_ratio=0.7, mask_block_size=64, _delete_=True))
+        type='block', mask_ratio=0.7, mask_block_size=32, _delete_=True))
 # Optimizer Hyperparameters
 optimizer_config = None
 optimizer = dict(
@@ -96,14 +100,14 @@ optimizer = dict(
 n_gpus = 4
 gpu_model = 'NVIDIATITANRTX'
 
-runner = dict(type='IterBasedRunner', max_iters=1000)
+runner = dict(type='IterBasedRunner', max_iters=20000)
 # Logging Configuration
-checkpoint_config = dict(by_epoch=False, interval=100, max_keep_ckpts=1)
-evaluation = dict(interval=200, metric='mIoU')
+checkpoint_config = dict(by_epoch=False, interval=1000, max_keep_ckpts=2)
+evaluation = dict(interval=2000, metric='mIoU')
 # Meta Information for Result Analysis
 name = 'flatHR2fishHR_mic_hrda_s2'
 exp = 'basic'
-name_dataset = 'uda_flatHR_to_fishHR_512x512' # uda_flatHR_to_fishHR_1024x1024
+name_dataset = 'uda_flatHR_to_fishHR_384x384' # uda_flatHR_to_fishHR_1024x1024
 name_architecture = 'hrda1-512-0.1_daformer_sepaspp_sl_mitb5'
 name_encoder = 'mitb5'
 name_decoder = 'hrda1-512-0.1_daformer_sepaspp_sl'

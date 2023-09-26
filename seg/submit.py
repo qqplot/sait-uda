@@ -181,11 +181,12 @@ if __name__ == '__main__':
         else:
             result = [result]
         
-        for pred in result:
-            pred_numpy = pred.astype(np.uint8)
-            pred_numpy = Image.fromarray(pred_numpy) # 이미지로 변환
-            pred_numpy.save(f'{out_path}{ori_filename}')
-            # results.append(result)
+        if not is_prototype:
+            for pred in result:
+                pred_numpy = pred.astype(np.uint8)
+                pred_numpy = Image.fromarray(pred_numpy) # 이미지로 변환
+                pred_numpy.save(f'{out_path}{ori_filename}')
+                # results.append(result)
         
         if show:
             img_tensor = data['img'][0]
