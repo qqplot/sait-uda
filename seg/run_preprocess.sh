@@ -14,7 +14,7 @@ cp $val_dir $out_dir
 # 2. Preprocess Ground Truth
 python preprocess_gt.py
 
-# 3. Make masks
+# 3. Make masks (생략 가능)
 python make_mask.py
 
 # 4. Make blended images

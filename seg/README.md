@@ -90,13 +90,14 @@ train IDs and to generate the class index for RCS:
 python tools/convert_datasets/flat.py data --gt-dir train_source_gt --nproc 8
 ```
 
-데이터 전처리 코드를 실행한다.
+전체 데이터 전처리 코드는 다음과 같이 실행할 수 있다.
 
 ```shell
 sh ./run_preprocess.sh
 ```
 
-데이터 전처리 코드는 다음과 같으며, 각각 프로세스가 시간이 오래 걸리고 어느 정도 용량을 요구하므로 주의해야 한다.
+그러나 각각 프로세스가 시간이 오래 걸리고 어느 정도 용량을 요구하므로 주의해야 한다.
+'생략 가능' 표시가 되어 있으면, 생략하고 진행하여도 된다.
 
 ```shell
 # 1. Make directory & Copy all Images
@@ -112,7 +113,7 @@ cp $val_dir $out_dir
 # 2. Preprocess Ground Truth
 python preprocess_gt.py
 
-# 3. Make masks
+# 3. Make masks (생략 가능)
 python make_mask.py
 
 # 4. Make blended images
