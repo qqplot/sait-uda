@@ -144,6 +144,13 @@ A trained model can be evaluated using:
 sh ./run_submit.sh 
 ```
 
+혹시나 제출된 pretrained 파일이 아니라 직접 훈련한 모델을 사용하고 싶으면, 해당 경로로 수정바랍니다!
+
+```shell
+config_path="${base_path}/work_dirs/local-${type_name}/${exp_name}/${exp_name}.py"
+checkpoint_path="${base_path}/work_dirs/local-${type_name}/${exp_name}/${iters}.pth"
+```
+
 
 ## Framework Structure
 

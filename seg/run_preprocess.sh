@@ -14,10 +14,8 @@ cp $val_dir $out_dir
 # 2. Preprocess Ground Truth
 python preprocess_gt.py
 
-
 # 3. Make masks
 python make_mask.py
-
 
 # 4. Make blended images
 python run_blend.py
