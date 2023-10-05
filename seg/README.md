@@ -95,31 +95,6 @@ sh ./run_preprocess.sh
 ```
 
 
-
-
-
-## Flat2Fish
-```shell
-
-
-
-#2. `pretrained`에 checkpoint를 넣으시오. (따로 드리겠소.)
-python run_experiments.py --config configs/mic/flatHR2fishHR_mic_hrda.py
-
-#3. 훈련하기 (gpu는 2개 이상 잡으시오)
-python run_experiments.py --config configs/mic/gtaHR2csHR_mic_hrda.py
-# 또는
-sbatch run.sh # 수정할 것
-
-```
-
-
-
-
-
-
-
-
 ## Training
 
 For convenience, we provide both [Low resolution config file](configs/mic/flatHR2fishHR_mic_hrda_384.py), [High resolution config file](configs/mic/flatHR2fishHR_mic_hrda_large.py)
@@ -138,7 +113,7 @@ The logs and checkpoints are stored in `work_dirs/`.
 
 ## Evaluation
 
-**반드시 `run_submit.sh`에서 `exp_name`를 수정해야 함.**
+**반드시 `run_submit.sh`에서 `exp_name`, `config_path`, `checkpoint_path`를 수정해야 함.**
 
 A trained model can be evaluated using:
 
