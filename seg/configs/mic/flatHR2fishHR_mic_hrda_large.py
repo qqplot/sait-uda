@@ -4,11 +4,10 @@
 # ---------------------------------------------------------------
 
 _base_ = [
-    '../_base_/default_runtime.py',
+    '../_base_/default_runtime_large.py',
     # DAFormer Network Architecture
     '../_base_/models/daformer_sepaspp_mitb5.py',
     # GTA->Cityscapes High-Resolution Data Loading
-    # '../_base_/datasets/uda_flatHR_to_fishHR_1024x1024.py',
     '../_base_/datasets/uda_flatHR_to_fishHR_1024x1024.py',    
     # DAFormer Self-Training
     '../_base_/uda/dacs_a999_fdthings.py',
@@ -18,7 +17,7 @@ _base_ = [
     '../_base_/schedules/poly10warm.py'
 ]
 # Random Seed
-seed = 2  # seed with median performance
+seed = 1  # seed with median performance
 # HRDA Configuration
 model = dict(
     type='HRDAEncoderDecoder',
@@ -46,7 +45,7 @@ model = dict(
     test_cfg=dict(
         mode='slide',
         batched_slide=True,
-        stride=[512, 512],
+        stride=[256, 256],
         crop_size=[1024, 1024]))
 data = dict(
     train=dict(
@@ -64,14 +63,14 @@ data = dict(
         target=dict(crop_pseudo_margins=[30, 240, 30, 30]),
     ),
     # Use one separate thread/worker for data loading.
-    workers_per_gpu=1,
+    workers_per_gpu=4,
     # Batch size
     samples_per_gpu=2,
 )
 # MIC Parameters
 uda = dict(
     # Apply masking to color-augmented target images
-    mask_mode='separatetrgaug',
+    mask_mode='separatetrgaug', # separatesrcaug separatetrgaug
     # Use the same teacher alpha for MIC as for DAFormer
     # self-training (0.999)
     mask_alpha='same',
@@ -87,7 +86,7 @@ uda = dict(
 # Optimizer Hyperparameters
 optimizer_config = None
 optimizer = dict(
-    lr=6e-05,
+    lr=6e-06,
     paramwise_cfg=dict(
         custom_keys=dict(
             head=dict(lr_mult=10.0),
@@ -97,13 +96,13 @@ optimizer = dict(
 n_gpus = 1
 gpu_model = 'NVIDIATITANRTX'
 
-runner = dict(type='IterBasedRunner', max_iters=20000)
+runner = dict(type='IterBasedRunner', max_iters=45000)
 # Logging Configuration
-checkpoint_config = dict(by_epoch=False, interval=1000, max_keep_ckpts=1)
-evaluation = dict(interval=1000, metric='mIoU')
+checkpoint_config = dict(by_epoch=False, interval=45000, max_keep_ckpts=1)
+evaluation = dict(interval=45000, metric='mIoU')
 # Meta Information for Result Analysis
 name = 'flatHR2fishHR_mic_hrda_s2'
-exp = 'large'
+exp = 'high'
 name_dataset = 'uda_flatHR_to_fishHR_1024x1024' 
 name_architecture = 'hrda1-512-0.1_daformer_sepaspp_sl_mitb5'
 name_encoder = 'mitb5'

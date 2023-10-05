@@ -31,11 +31,15 @@ def get_arguments():
     parser.add_argument('--show_dir', type=str, default='/home/s2/kyubyungchae/MIC/seg/')
     parser.add_argument('--checkpoint_path', type=str, default='/home/s2/kyubyungchae/MIC/seg/')
     parser.add_argument('--test_path', type=str, default='/home/s2/kyubyungchae/MIC/seg/test.csv')
-    parser.add_argument('--show', type=bool, default=True)    
+    parser.add_argument('--show', type=int, default=0)    
     parser.add_argument('--iters', type=str, default='latest')
     parser.add_argument('--type_name', type=str, default='basic')
     parser.add_argument('--exp_name', type=str, default='230925_0043_flatHR2fishHR_mic_hrda_s2_85112')
     parser.add_argument('--now_str', type=str, default='2023-09-25T17_10_10')
+    parser.add_argument('--result_dir', type=str, default='./results')
+    parser.add_argument('--data_path', type=str, default="/shared/s2/lab01/dataset/sait_uda/data/")
+    parser.add_argument('--img_dir', type=str, default='test_image')
+    parser.add_argument('--after_mask', type=int, default=0)
 
     return parser
 
@@ -76,6 +80,30 @@ def createFolder(directory):
         print ('Error: Creating directory. ' +  directory)
 
 
+def after_mask(mask, verbose=False):
+
+    height, width = mask.shape
+
+    sky_threshold = int(height * 0.85)
+    left_threshold = int(width * 0.30)
+    right_threshold = int(width * 0.70)    
+    if verbose:
+        print('\nsky_threshold:', sky_threshold)
+    sum = 0 
+    for y in range(sky_threshold, height):
+        for x in range(width):
+            if x >= left_threshold and x <= right_threshold:
+                if mask[y, x] not in [0, 12]:
+                    sum += 1
+                    mask[y, x] = 0
+            else:
+                if mask[y, x] not in [0, 12]:
+                    sum += 1
+                    mask[y, x] = 12
+
+
+    return mask, sum, sky_threshold
+
 
 if __name__ == '__main__':
 
@@ -85,12 +113,6 @@ if __name__ == '__main__':
     show = args.show
     iters = args.iters  # latest
     type_name = args.type_name # 'basic' 'large' 'blend' 'small' 'weight' 'cityscapes' bottom
-    # exp_name = '230919_1506_flatHR2fishHR_mic_hrda_s2_95481' # best
-    # exp_name = '230920_1934_flatHR2fishHR_mic_hrda_s2_068cf' # best start
-    # exp_name = '230921_1619_flatHR2fishHR_mic_hrda_s2_9347a' # load_from = 'work_dirs/local-small/230920_1934_flatHR2fishHR_mic_hrda_s2_068cf/iter_20000.pth'
-    # exp_name = '230921_1428_flatHR2fishHR_mic_hrda_s2_bef7e' # 0.5
-    # exp_name = '230922_1619_flatHR2fishHR_mic_hrda_s2_4d990' # 0.514462
-    # exp_name = '230923_1659_flatHR2fishHR_mic_hrda_s2_79a79'
 
     base_path = args.base_path
     out_path = args.out_path
@@ -99,7 +121,7 @@ if __name__ == '__main__':
     config_path = args.config_path
     checkpoint_path = args.checkpoint_path
     test_path = args.test_path
-    data_path = "/shared/s2/lab01/dataset/sait_uda/data/"
+    data_path = args.data_path
     submission_path = data_path + '/sample_submission.csv'
 
     createFolder(out_path)
@@ -127,7 +149,7 @@ if __name__ == '__main__':
     test_img_name_lis = test_img_list.iloc[:,1]
 
     cfg.data.test['data_root'] = data_path
-    cfg.data.test['img_dir'] = 'test_image'
+    cfg.data.test['img_dir'] = args.img_dir
     cfg.data.test['ann_dir'] = None
 
     dataset = build_dataset(cfg.data.test)
@@ -174,7 +196,14 @@ if __name__ == '__main__':
         
         for pred in result:
             pred_numpy = pred.astype(np.uint8)
+            if args.after_mask:
+                pred_numpy, sum, _ = after_mask(pred_numpy)
+                # print("pix:", sum)
+
             pred_numpy = Image.fromarray(pred_numpy) # 이미지로 변환
+
+
+
             pred_numpy.save(f'{out_path}{ori_filename}')
             # results.append(result)
         
@@ -230,7 +259,7 @@ if __name__ == '__main__':
     submit['mask_rle'] = submit_outputs
 
 
-    result_dir = './results'
+    result_dir = args.result_dir
     createFolder(result_dir)
     submit.to_csv(f'{result_dir}/{args.now_str}_{args.exp_name}_submit.csv', index=False)
 

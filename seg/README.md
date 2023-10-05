@@ -1,26 +1,6 @@
-# MIC for Domain-Adaptive Semantic Segmentation
+# MIC for Camera-Invariant Domain Adaptation
 
-## Flat2Fish
-```shell
-#0. 관련된 패키지 설치
-pip install mmcv-full
-
-#1. (생략하시오.) 데이터 통계 생성
-python tools/convert_datasets/flat.py data/flat --nproc 8
-python tools/convert_datasets/flat.py /shared/s2/lab01/dataset/fish --gt-dir train_source_gt_blend_lbl12 --nproc 8
-
-python tools/convert_datasets/flat.py /shared/s2/lab01/dataset/fish/all --gt-dir train_source_gt_all --nproc 8
-
-
-#2. `pretrained`에 checkpoint를 넣으시오. (따로 드리겠소.)
-python run_experiments.py --config configs/mic/flatHR2fishHR_mic_hrda.py
-
-#3. 훈련하기 (gpu는 2개 이상 잡으시오)
-python run_experiments.py --config configs/mic/gtaHR2csHR_mic_hrda.py
-# 또는
-sbatch run.sh # 수정할 것
-
-```
+코드가 실행이 되지 않으면 `kyubyung.chae@snu.ac.kr`로 언제든지 연락바랍니다.
 
 
 ## Environment Setup
@@ -49,138 +29,6 @@ the instructions for a manual download within the script.
 sh tools/download_checkpoints.sh
 ```
 
-## Dataset Setup
-
-**Cityscapes:** Please, download leftImg8bit_trainvaltest.zip and
-gt_trainvaltest.zip from [here](https://www.cityscapes-dataset.com/downloads/)
-and extract them to `data/cityscapes`.
-
-**GTA:** Please, download all image and label packages from
-[here](https://download.visinf.tu-darmstadt.de/data/from_games/) and extract
-them to `data/gta`.
-
-**Synthia (Optional):** Please, download SYNTHIA-RAND-CITYSCAPES from
-[here](http://synthia-dataset.net/downloads/) and extract it to `data/synthia`.
-
-**ACDC (Optional):** Please, download rgb_anon_trainvaltest.zip and
-gt_trainval.zip from [here](https://acdc.vision.ee.ethz.ch/download) and
-extract them to `data/acdc`. Further, please restructure the folders from
-`condition/split/sequence/` to `split/` using the following commands:
-
-```shell
-rsync -a data/acdc/rgb_anon/*/train/*/* data/acdc/rgb_anon/train/
-rsync -a data/acdc/rgb_anon/*/val/*/* data/acdc/rgb_anon/val/
-rsync -a data/acdc/gt/*/train/*/*_labelTrainIds.png data/acdc/gt/train/
-rsync -a data/acdc/gt/*/val/*/*_labelTrainIds.png data/acdc/gt/val/
-```
-
-**Dark Zurich (Optional):** Please, download the Dark_Zurich_train_anon.zip
-and Dark_Zurich_val_anon.zip from
-[here](https://www.trace.ethz.ch/publications/2019/GCMA_UIoU/) and extract it
-to `data/dark_zurich`.
-
-The final folder structure should look like this:
-
-```none
-DAFormer
-├── ...
-├── data
-│   ├── acdc (optional)
-│   │   ├── gt
-│   │   │   ├── train
-│   │   │   ├── val
-│   │   ├── rgb_anon
-│   │   │   ├── train
-│   │   │   ├── val
-│   ├── cityscapes
-│   │   ├── leftImg8bit
-│   │   │   ├── train
-│   │   │   ├── val
-│   │   ├── gtFine
-│   │   │   ├── train
-│   │   │   ├── val
-│   ├── dark_zurich (optional)
-│   │   ├── gt
-│   │   │   ├── val
-│   │   ├── rgb_anon
-│   │   │   ├── train
-│   │   │   ├── val
-│   ├── gta
-│   │   ├── images
-│   │   ├── labels
-│   ├── synthia (optional)
-│   │   ├── RGB
-│   │   ├── GT
-│   │   │   ├── LABELS
-├── ...
-```
-
-**Data Preprocessing:** Finally, please run the following scripts to convert the label IDs to the
-train IDs and to generate the class index for RCS:
-
-```shell
-python tools/convert_datasets/flat.py data/flat --nproc 8
-
-python tools/convert_datasets/gta.py data/gta --nproc 8
-python tools/convert_datasets/cityscapes.py data/cityscapes --nproc 8
-python tools/convert_datasets/synthia.py data/synthia/ --nproc 8
-```
-
-## Training
-
-For convenience, we provide an [annotated config file](configs/mic/gtaHR2csHR_mic_hrda.py)
-of the final MIC(HRDA) on GTA→Cityscapes. A training job can be launched using:
-
-```shell
-python run_experiments.py --config configs/mic/gtaHR2csHR_mic_hrda.py
-
-python run_experiments.py --config configs/mic/flatHR2fishHR_mic_hrda.py
-```
-
-The logs and checkpoints are stored in `work_dirs/`.
-
-For the other experiments in our paper, we use a script to automatically
-generate and train the configs:
-
-```shell
-python run_experiments.py --exp <ID>
-```
-
-More information about the available experiments and their assigned IDs, can be
-found in [experiments.py](experiments.py). The generated configs will be stored
-in `configs/generated/`.
-
-## Evaluation
-
-A trained model can be evaluated using:
-
-```shell
-./test.sh work_dirs/local-basic/230913_2341_flatHR2fishHR_mic_hrda_s2_4e66e 
-
-sh test.sh work_dirs/run_name/
-```
-
-The predictions are saved for inspection to
-`work_dirs/run_name/preds`
-and the mIoU of the model is printed to the console.
-
-When training a model on Synthia→Cityscapes, please note that the
-evaluation script calculates the mIoU for all 19 Cityscapes classes. However,
-Synthia contains only labels for 16 of these classes. Therefore, it is a common
-practice in UDA to report the mIoU for Synthia→Cityscapes only on these 16
-classes. As the Iou for the 3 missing classes is 0, you can do the conversion
-`mIoU16 = mIoU19 * 19 / 16`.
-
-The results for Cityscapes→ACDC and Cityscapes→DarkZurich are reported on
-the test split of the target dataset. To generate the predictions for the test
-set, please run:
-
-```shell
-python -m tools.test path/to/config_file path/to/checkpoint_file --test-set --format-only --eval-option imgfile_prefix=labelTrainIds to_label_id=False
-```
-
-The predictions can be submitted to the public evaluation server of the
-respective dataset to obtain the test score.
 
 ## Checkpoints
 
@@ -189,9 +37,6 @@ As the results in the paper are provided as the mean over three random
 seeds, we provide the checkpoint with the median validation performance here.
 
 * [MIC(HRDA) for GTA→Cityscapes](https://drive.google.com/file/d/1p_Ytxmj8EckYsq6SdZNZJNC3sgxVRn2d/view?usp=sharing)
-* [MIC(HRDA) for Synthia→Cityscapes](https://drive.google.com/file/d/1-Ed0Z2APrhIdsuQTOWXNlZwJJ9Yr2-Vu/view?usp=sharing)
-* [MIC(HRDA) for Cityscapes→ACDC](https://drive.google.com/file/d/10RNOAyUY5nYKzIIbNTie458r9etzfvtc/view?usp=share_link)
-* [MIC(HRDA) for Cityscapes→DarkZurich](https://drive.google.com/file/d/1HXIwLULUsspBG4U1UAd7OQnDq1G33aTA/view?usp=sharing)
 
 The checkpoints come with the training logs. Please note that:
 
@@ -203,6 +48,104 @@ The checkpoints come with the training logs. Please note that:
   test split. For DarkZurich, the performance significantly differs between
   validation and test split. Please, read the section above on how to obtain
   the test mIoU.
+
+
+
+
+## Dataset Setup
+
+The final folder structure should look like this:
+
+```none
+base
+├── ...
+├── data
+│   ├── train_source_image
+│   ├── train_source_gt
+│   ├── train_target_image
+│   ├── val_source_image
+│   ├── val_source_gt
+│   ├── test_image
+│   ├── sample_submission.csv
+│   ├── test.csv
+│   ├── sample_class_stats_dict.json
+│   ├── sample_class_stats.json
+│   ├── samples_with_class.json
+├── pretrained
+│   ├── gtaHR2csHR_mic_hrda_650a8 (다운로드 필요)
+│   ├── 231002_0409_flatHR2fishHR_mic_hrda_s2_40209
+│   ├── mit_b5.pth
+├── ...
+```
+
+**Data Preprocessing :** 
+
+**생략; 제공된 json 파일 이용**
+Finally, please run the following scripts to convert the label IDs to the
+train IDs and to generate the class index for RCS:
+
+```shell
+python tools/convert_datasets/flat.py data --gt-dir train_source_gt --nproc 8
+```
+
+데이터 전처리 코드를 실행한다.
+
+```shell
+sh ./run_preprocess.sh
+```
+
+
+
+
+
+## Flat2Fish
+```shell
+
+
+
+#2. `pretrained`에 checkpoint를 넣으시오. (따로 드리겠소.)
+python run_experiments.py --config configs/mic/flatHR2fishHR_mic_hrda.py
+
+#3. 훈련하기 (gpu는 2개 이상 잡으시오)
+python run_experiments.py --config configs/mic/gtaHR2csHR_mic_hrda.py
+# 또는
+sbatch run.sh # 수정할 것
+
+```
+
+
+
+
+
+
+
+
+## Training
+
+For convenience, we provide both [Low resolution config file](configs/mic/flatHR2fishHR_mic_hrda_384.py), [High resolution config file](configs/mic/flatHR2fishHR_mic_hrda_large.py)
+of the final MIC(HRDA) on Source(Flat)→Target(Fisheye). A training job can be launched using:
+
+```shell
+# Initial Training with Low resolution
+python run_experiments.py --config configs/mic/flatHR2fishHR_mic_hrda.py
+
+# After Training with High resolution
+python run_experiments.py --config configs/mic/flatHR2fishHR_mic_hrda_large.py
+```
+
+The logs and checkpoints are stored in `work_dirs/`.
+
+
+## Evaluation
+
+**반드시 `run_submit.sh`에서 `exp_name`를 수정해야 함.**
+
+A trained model can be evaluated using:
+
+```shell
+sh ./run_submit.sh 
+```
+
 
 ## Framework Structure
 

@@ -70,12 +70,12 @@ data = dict(
     # Use one separate thread/worker for data loading.
     workers_per_gpu=1,
     # Batch size
-    samples_per_gpu=1,
+    samples_per_gpu=2,
 )
 # MIC Parameters
 uda = dict(
     # Apply masking to color-augmented target images
-    mask_mode='separatetrgaug',
+    mask_mode='separatesrcaug', # separatetrgaug separatesrcaug separateaug
     # Use the same teacher alpha for MIC as for DAFormer
     # self-training (0.999)
     mask_alpha='same',
@@ -102,11 +102,11 @@ gpu_model = 'NVIDIATITANRTX'
 
 runner = dict(type='IterBasedRunner', max_iters=20000)
 # Logging Configuration
-checkpoint_config = dict(by_epoch=False, interval=1000, max_keep_ckpts=1)
-evaluation = dict(interval=1000, metric='mIoU')
+checkpoint_config = dict(by_epoch=False, interval=2000, max_keep_ckpts=1)
+evaluation = dict(interval=2000, metric='mIoU')
 # Meta Information for Result Analysis
 name = 'flatHR2fishHR_mic_hrda_s2'
-exp = 'cityscapes-long'
+exp = 'fishblend' # 'sharp'
 name_dataset = 'uda_flatHR_to_fishHR_512x512' # uda_flatHR_to_fishHR_1024x1024
 name_architecture = 'hrda1-512-0.1_daformer_sepaspp_sl_mitb5'
 name_encoder = 'mitb5'

@@ -37,21 +37,27 @@ model = dict(
         loss_decode=dict(
             type='CrossEntropyLoss', use_sigmoid=False, loss_weight=1.0,
             # 13개 클래스만
-            class_weight=[1.0110, # Road
-                          1.0065, # Sidewalk
-                          1.0030, # Construction
-                          1.0865, # Fence
-                          1.0507, # Pole
-                          1.0945, # Traffic Light
-                          1.1089, # Traffic Sign
-                          1.0000, # Nature
-                          0.866, # Sky
-                          1.1116, # Person
-                          1.0529, # Rider
-                          1.0000, # Car
-                          0.8373, # Background
-                          ]
+            # class_weight=[1.0110, # Road
+            #               0.9065, # Sidewalk
+            #               1.0030, # Construction
+            #               1.0065, # Fence
+            #               1.0507, # Pole
+            #               1.0945, # Traffic Light
+            #               1.1089, # Traffic Sign
+            #               1.0000, # Nature
+            #               0.8660, # Sky
+            #               1.5000, # Person
+            #               1.0529, # Rider
+            #               1.0000, # Car
+            #               1.0000, # Background
+            #               ]
+                # 1. Road, Sky, Background
+                # 2. Nature, Construction, Car
+                # 3. Fence, Traffic Light, Traffic Sign, Sidewalk
+                # 4. Pole, Person, Rider
+
             )),
+
     # model training and testing settings
     train_cfg=dict(),
     test_cfg=dict(mode='whole'))
