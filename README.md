@@ -5,7 +5,18 @@
 
 
 
-# MIC: Masked Image Consistency for Context-Enhanced Domain Adaptation
+
+
+
+
+
+
+
+
+
+
+
+## MIC: Masked Image Consistency for Context-Enhanced Domain Adaptation
 
 **by
 [Lukas Hoyer](https://lhoyer.github.io/),
