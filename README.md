@@ -1,3 +1,10 @@
+# 2023 Samsung AI Challenge: Camera-Invariant Domain Adaptation
+
+서브 디렉토리 [seg/](seg/)를 확인바랍니다. 
+해당 디렉토리의 [seg/README.md](seg/README.md)를 참조하십시오.
+
+
+
 # MIC: Masked Image Consistency for Context-Enhanced Domain Adaptation
 
 **by
