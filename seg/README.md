@@ -31,6 +31,8 @@ sh tools/download_checkpoints.sh
 
 
 ## Checkpoints
+MIC에서 훈련된 모델로 초기화하고 훈련을 진행하였음. 링크는 아래와 같음.
+(메일로 같이 동봉하였으니, 여기서는 다운로드를 진행하지 않아도 됨.)
 
 Below, we provide checkpoints of MIC(HRDA) for the different benchmarks.
 As the results in the paper are provided as the mean over three random
@@ -125,7 +127,7 @@ of the final MIC(HRDA) on Source(Flat)→Target(Fisheye). A training job can be 
 
 ```shell
 # Initial Training with Low resolution
-python run_experiments.py --config configs/mic/flatHR2fishHR_mic_hrda.py
+python run_experiments.py --config configs/mic/flatHR2fishHR_mic_hrda_384.py
 
 # After Training with High resolution
 python run_experiments.py --config configs/mic/flatHR2fishHR_mic_hrda_large.py

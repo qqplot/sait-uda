@@ -96,10 +96,10 @@ optimizer = dict(
 n_gpus = 1
 gpu_model = 'NVIDIATITANRTX'
 
-runner = dict(type='IterBasedRunner', max_iters=45000)
+runner = dict(type='IterBasedRunner', max_iters=40000)
 # Logging Configuration
-checkpoint_config = dict(by_epoch=False, interval=45000, max_keep_ckpts=1)
-evaluation = dict(interval=45000, metric='mIoU')
+checkpoint_config = dict(by_epoch=False, interval=40000, max_keep_ckpts=1)
+evaluation = dict(interval=40000, metric='mIoU')
 # Meta Information for Result Analysis
 name = 'flatHR2fishHR_mic_hrda_s2'
 exp = 'high'
