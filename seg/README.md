@@ -123,6 +123,8 @@ python run_blend.py
 
 ## Training
 
+반드시 [default_runtime_large.py](configs/_base_/default_runtime_large.py)를 수정바랍니다.
+
 For convenience, we provide both [Low resolution config file](configs/mic/flatHR2fishHR_mic_hrda_384.py), [High resolution config file](configs/mic/flatHR2fishHR_mic_hrda_large.py)
 of the final MIC(HRDA) on Source(Flat)→Target(Fisheye). A training job can be launched using:
 
